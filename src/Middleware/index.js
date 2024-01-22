@@ -6,7 +6,7 @@ exports.verifyToken =(req,res,next)=>{
     const token=req.headers.authorization
     console.log(token);
     if(token){
-        const data=jwt.verify(token,"MYSECRETKEY@")
+        const data=jwt.verify(token,process.env.SECRET_KEY)
         const {id}=data;
         req.id= id;
         next();

@@ -38,7 +38,7 @@ exports.login=async (req,res)=>{
        if(eUser.authenticate(password)){
         const token = jwt.sign({
             id:eUser._id
-        },"MYSECRETKEY@",{
+        }, process.env.SECRET_KEY,{
             expiresIn:"1y"
         })
         res.status(200).json({token,message:"Login Succesfull"})
