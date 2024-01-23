@@ -1,6 +1,7 @@
 //index.js middleware
 const jwt = require("jsonwebtoken")
 const {check,validationResult} = require("express-validator")
+
 exports.verifyToken =(req,res,next)=>{
    try {
     const token=req.headers.authorization
