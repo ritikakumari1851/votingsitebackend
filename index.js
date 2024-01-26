@@ -14,12 +14,6 @@ const { verifyToken, validateForm, isValidated } = require('./src/Middleware');
 const { addForm } = require('./src/Controllers/form');
 const { sendEmail } = require('./src/helper/Email');
 server.use(express.json());
-const corsOptions = {
-    origin: 'https://voteonclick.web.app',
-    // other cors options if needed
-  };
-  server.use(cors(corsOptions));
-  
 server.use(cors())
 server.get("/", (req, res) => {
     res.status(200).json({
