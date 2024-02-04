@@ -53,7 +53,33 @@ exports.login=async (req,res)=>{
     }
 }
 
-exports.findUser =async(req,res)=>{
-    const user_= await user.findById(req.id)
-    return res.status(200).json({user_})
-}
+exports.findUser = async (req, res) => {
+    
+    try {
+      const user_ = await user.findById(req.id);
+  
+      if (!user_) {
+        return res.status(404).json({
+          message: "User not found"
+        });
+      }
+      console.log("Request received at /get-user");
+      console.log("User data:", user_); // Assuming findUser sets user data in req.user
+      
+      // Send relevant user data, including the name
+      const { _id, full_name, email, username, Dob, gender } = user_;
+      return res.status(200).json({
+        user: { _id, full_name, email, username, Dob, gender },
+        message: "User data retrieved successfully"
+      });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return res.status(500).json({
+        message: "Internal Server Error"
+      });
+      
+    }
+    
+  };
+
+  
