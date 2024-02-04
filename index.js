@@ -14,7 +14,8 @@ const { register, login, findUser } = require("./src/Controllers/auth");
 const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
-const { candidate } = require("./src/Controllers/candidate");
+const { findcandidate } = require("./src/Controllers/candidate");
+const Candidate = require("./src/model/Candidate");
 server.use(express.json());
 server.use(cors());
 server.get("/", (req, res) => {
@@ -37,10 +38,20 @@ server.get("/get-user", verifyToken, findUser, (req, res) => {
   console.log("User data:", req.user);
   res.json({ user: req.user });
 });
+server.get("/get-candidate", findcandidate, (req, res) => {
+  if (!req.user) {
+    // If user data is not found, return an error response
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  console.log("Request received at /get-user");
+  console.log("User data:", req.user);
+  res.json({ user: req.user });
+});
 server.use("/uploads", express.static("uploads"));
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
-server.post("/candidate", candidate);
+
 io.on("connection", (socket) => {
   console.log("new user connected");
   socket.on("message", (message, room) => {
@@ -52,6 +63,7 @@ io.on("connection", (socket) => {
     socket.emit("joined");
   });
 });
+server.post("/candidate", Candidate);
 
 mongoose
   .connect(process.env.MONGO_URL)
