@@ -12,13 +12,18 @@ const candidateSchema = new mongoose.Schema({
   mobile_no: {
     type: Number,
   },
-  adhar_no: {
-    type: Number,
-  },
   position: {
     type: String,
   },
-  Image: { data: Buffer ,
-    contentType: String},
+  dob: {
+    type:Date
+  }
+  // name:{
+  //   type:String
+  // },
+  // age:{
+  //   type:Number
+  // }
+
 });
 module.exports = mongoose.model("candidate", candidateSchema);

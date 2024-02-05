@@ -1,7 +1,10 @@
 //index.js middleware
 const jwt = require("jsonwebtoken")
 const {check,validationResult} = require("express-validator")
-
+const multer = require("multer");
+// Set up multer storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 exports.verifyToken =(req,res,next)=>{
    try {
     const token=req.headers.authorization
@@ -37,3 +40,4 @@ exports.isValidated = (req,res,next)=>{
         })
     }
 }
+exports.uploadMiddleware = upload.single("profilePicture");

@@ -1,21 +1,22 @@
 // index,js
 const express = require("express");
 const server = express();
-const multer = require("multer");
 const { Server } = require("socket.io");
 const http = require("http");
+
 const app = http.createServer(server);
 const io = new Server(app);
 const port = process.env.PORT || 3000;
-
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { register, login, findUser } = require("./src/Controllers/auth");
-const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
+const { register, login, findUser, voteregister, voterlogin } = require("./src/Controllers/auth");
+const { verifyToken, validateForm, isValidated, uploadMiddleware } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
-const { findcandidate } = require("./src/Controllers/candidate");
+const { candidate } = require("./src/Controllers/candidate");
 const Candidate = require("./src/model/Candidate");
+// const { candidate} = require("./src/Controllers/candidate");
+
 server.use(express.json());
 server.use(cors());
 server.get("/", (req, res) => {
@@ -28,6 +29,9 @@ server.get("/", (req, res) => {
 
 require("dotenv").config();
 server.post("/register", register, sendEmail);
+server.post("/voteregister", voteregister)
+server.post("/voterlogin",voterlogin)
+// server.post("/candidate", candidate, uploadMiddleware)
 server.get("/get-user", verifyToken, findUser, (req, res) => {
   if (!req.user) {
     // If user data is not found, return an error response
@@ -38,17 +42,27 @@ server.get("/get-user", verifyToken, findUser, (req, res) => {
   console.log("User data:", req.user);
   res.json({ user: req.user });
 });
-server.get("/get-candidate", findcandidate, (req, res) => {
-  if (!req.user) {
-    // If user data is not found, return an error response
-    return res.status(404).json({ error: "User not found" });
+server.post("/candidate", async (req, res) => {
+  try {
+    const { full_Name, email,mobile_no,position,dob,about } = req.body;
+    const newCandidate = new Candidate({ full_Name,email,mobile_no,position,dob,about });
+    await newCandidate.save();
+    res.send("Data inserted");
+  } catch (error) {
+    console.error("Error inserting data:", error.message);
+    res.status(500).send("Internal Server Error");
   }
-
-  console.log("Request received at /get-user");
-  console.log("User data:", req.user);
-  res.json({ user: req.user });
 });
-server.use("/uploads", express.static("uploads"));
+
+server.get("/candidate", async (req, res) => {
+  try {
+    const candidates = await Candidate.find();
+    res.json(candidates);
+  } catch (error) {
+    console.error("Error fetching candidates:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
 
@@ -63,7 +77,6 @@ io.on("connection", (socket) => {
     socket.emit("joined");
   });
 });
-server.post("/candidate", Candidate);
 
 mongoose
   .connect(process.env.MONGO_URL)
