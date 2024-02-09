@@ -12,7 +12,7 @@ exports.sendEmail=async(req,res)=>{
                }
         })
         const data= {
-            from:EMAIL_USER,
+            from:'votonclick@gmail.com',
             to:req.body.email,
             subject:req.subject,
             text: req.text

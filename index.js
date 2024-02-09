@@ -1,24 +1,23 @@
-// index,js
 const express = require("express");
 const server = express();
 const { Server } = require("socket.io");
 const http = require("http");
-
-const app = http.createServer(server);
-const io = new Server(app);
-const port = process.env.PORT || 3000;
-const cors = require("cors");
 const mongoose = require("mongoose");
-const { register, login, findUser, voteregister, voterlogin } = require("./src/Controllers/auth");
+const cors = require("cors");
+const { register, login, findUser, voteregister, voterlogin, vote } = require("./src/Controllers/auth");
 const { verifyToken, validateForm, isValidated, uploadMiddleware } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
-const { candidate } = require("./src/Controllers/candidate");
 const Candidate = require("./src/model/Candidate");
-// const { candidate} = require("./src/Controllers/candidate");
 
 server.use(express.json());
 server.use(cors());
+
+const app = http.createServer(server);
+const io = new Server(app);
+
+const port = process.env.PORT || 3000;
+
 server.get("/", (req, res) => {
   res.status(200).json({
     uname: "Ritika",
@@ -29,23 +28,18 @@ server.get("/", (req, res) => {
 
 require("dotenv").config();
 server.post("/register", register, sendEmail);
-server.post("/voteregister", voteregister)
-server.post("/voterlogin",voterlogin)
-// server.post("/candidate", candidate, uploadMiddleware)
+server.post("/voteregister", voteregister);
+server.post("/voterlogin", voterlogin);
 server.get("/get-user", verifyToken, findUser, (req, res) => {
   if (!req.user) {
-    // If user data is not found, return an error response
     return res.status(404).json({ error: "User not found" });
   }
-
-  console.log("Request received at /get-user");
-  console.log("User data:", req.user);
   res.json({ user: req.user });
 });
 server.post("/candidate", async (req, res) => {
   try {
-    const { full_Name, email,mobile_no,position,dob,about } = req.body;
-    const newCandidate = new Candidate({ full_Name,email,mobile_no,position,dob,about });
+    const { full_Name, email, mobile_no, position, dob, about } = req.body;
+    const newCandidate = new Candidate({ full_Name, email, mobile_no, position, dob, about });
     await newCandidate.save();
     res.send("Data inserted");
   } catch (error) {
@@ -53,7 +47,7 @@ server.post("/candidate", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
+server.post("/vote", vote, verifyToken);
 server.get("/candidate", async (req, res) => {
   try {
     const candidates = await Candidate.find();
@@ -67,9 +61,9 @@ server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
 
 io.on("connection", (socket) => {
-  console.log("new user connected");
+  console.log("New user connected");
   socket.on("message", (message, room) => {
-    console.log`(New message recieved in ${room} and message is ${message})`;
+    console.log(`New message received in ${room} and message is ${message}`);
     socket.to(room).emit("message", message);
   });
   socket.on("join", (room) => {
@@ -78,11 +72,10 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("Database is connected"))
-  .catch((error) => console.log(error.message));
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("Database connected"))
+  .catch((error) => console.error("Database connection error:", error));
 
-app.listen(port, function () {
-  console.log("Server is on");
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
