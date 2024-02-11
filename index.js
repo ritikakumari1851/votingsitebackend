@@ -8,7 +8,8 @@ const { register, login, findUser, voteregister, voterlogin, vote } = require(".
 const { verifyToken, validateForm, isValidated, uploadMiddleware } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
-const Candidate = require("./src/model/candidate");
+const Candidate = require("./src/model/Candidate");
+
 
 server.use(express.json());
 server.use(cors());
@@ -38,8 +39,8 @@ server.get("/get-user", verifyToken, findUser, (req, res) => {
 });
 server.post("/candidate", async (req, res) => {
   try {
-    const { full_Name, email, mobile_no, position, dob, about } = req.body;
-    const newCandidate = new Candidate({ full_Name, email, mobile_no, position, dob, about });
+    const { full_Name, email, mobile_no, position, dob, about,message,BallotID } = req.body;
+    const newCandidate = new Candidate({ full_Name, email, mobile_no, position, dob, about,message,BallotID });
     await newCandidate.save();
     res.send("Data inserted");
   } catch (error) {

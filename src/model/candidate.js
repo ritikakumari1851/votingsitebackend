@@ -17,13 +17,12 @@ const candidateSchema = new mongoose.Schema({
   },
   dob: {
     type:Date
+  },
+  message:{
+    type:String
+  },
+  BallotID:{
+    type:number
   }
-  // name:{
-  //   type:String
-  // },
-  // age:{
-  //   type:Number
-  // }
-
 });
 module.exports = mongoose.model("candidate", candidateSchema);
