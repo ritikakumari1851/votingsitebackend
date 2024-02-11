@@ -9,6 +9,7 @@ const { verifyToken, validateForm, isValidated, uploadMiddleware } = require("./
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
+const voter = require("./src/model/voter");
 
 
 server.use(express.json());
@@ -48,7 +49,6 @@ server.post("/candidate", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-server.post("/vote", vote, verifyToken);
 server.get("/candidate", async (req, res) => {
   try {
     const candidates = await Candidate.find();
@@ -60,7 +60,37 @@ server.get("/candidate", async (req, res) => {
 });
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
+server.post("/vote", async (req, res) => {
+  const { voterId, candidateId } = req.body;
 
+  try {
+    // Find the voter and candidate
+    const voter = await voter.findById(voterId);
+    const candidate = await Candidate.findById(candidateId);
+
+    if (!voter || !candidate) {
+      return res.status(404).json({ message: "Voter or candidate not found" });
+    }
+
+    // Check if the voter has already voted
+    if (voter.vote === 0) {
+      return res.status(400).json({ message: "Voter has already voted" });
+    }
+
+    // Decrement voter's vote by 1 and increment candidate's vote by 1
+    voter.vote = 0;
+    candidate.vote += 1;
+
+    // Save changes
+    await voter.save();
+    await candidate.save();
+
+    return res.status(200).json({ message: "Vote submitted successfully" });
+  } catch (error) {
+    console.error("Error submitting vote:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
 io.on("connection", (socket) => {
   console.log("New user connected");
   socket.on("message", (message, room) => {
