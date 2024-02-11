@@ -22,7 +22,7 @@ const candidateSchema = new mongoose.Schema({
     type:String
   },
   BallotID:{
-    type:number
+    type:Number
   }
 });
 module.exports = mongoose.model("candidate", candidateSchema);
