@@ -8,7 +8,7 @@ const { register, login, findUser, voteregister, voterlogin, vote } = require(".
 const { verifyToken, validateForm, isValidated, uploadMiddleware } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
-const Candidate = require("./src/model/Candidate");
+const Candidate = require("./src/model/candidate");
 
 
 server.use(express.json());
