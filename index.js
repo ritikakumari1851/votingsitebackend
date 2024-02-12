@@ -9,8 +9,7 @@ const { verifyToken, validateForm, isValidated, uploadMiddleware } = require("./
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
-
-
+const voter = require("./src/model/voter");
 server.use(express.json());
 server.use(cors());
 
@@ -50,15 +49,13 @@ server.post("/candidate", async (req, res) => {
 });
 server.get("/candidate", async (req, res) => {
   try {
-    const ballotId = req.query.BallotId; // Get the BallotId from the query parameters
-    const candidates = await Candidate.find({ BallotId: ballotId }); // Fetch candidates based on the BallotId
+    const candidates = await Candidate.find();
     res.json(candidates);
   } catch (error) {
     console.error("Error fetching candidates:", error.message);
     res.status(500).send("Internal Server Error");
   }
 });
-
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
 server.post("/vote", async (req, res) => {
