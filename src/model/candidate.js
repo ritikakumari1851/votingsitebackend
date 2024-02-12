@@ -21,7 +21,7 @@ const candidateSchema = new mongoose.Schema({
   message:{
     type:String
   },
-  BallotID:{
+  BallotId:{
     type:Number
   },
   vote: { type: Number, default: 0 }
