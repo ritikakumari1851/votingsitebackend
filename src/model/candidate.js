@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const candidateSchema = new mongoose.Schema({
-  full_Name: {
+  full_name: {
+    type: String,
+  },
+  Name: {
     type: String,
   },
   email: {
