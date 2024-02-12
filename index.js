@@ -50,13 +50,15 @@ server.post("/candidate", async (req, res) => {
 });
 server.get("/candidate", async (req, res) => {
   try {
-    const candidates = await Candidate.find();
+    const ballotId = req.query.BallotId; // Get the BallotId from the query parameters
+    const candidates = await Candidate.find({ BallotId: ballotId }); // Fetch candidates based on the BallotId
     res.json(candidates);
   } catch (error) {
     console.error("Error fetching candidates:", error.message);
     res.status(500).send("Internal Server Error");
   }
 });
+
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
 server.post("/vote", async (req, res) => {
