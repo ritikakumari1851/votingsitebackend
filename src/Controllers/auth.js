@@ -102,8 +102,6 @@ exports.login = async (req, res) => {
     });
   }
 };
-const jwt = require("jsonwebtoken");
-const voter = require("../models/voter");
 
 exports.voterlogin = async (req, res) => {
   const { email, password } = req.body;
