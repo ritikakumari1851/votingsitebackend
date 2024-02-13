@@ -102,6 +102,9 @@ exports.login = async (req, res) => {
     });
   }
 };
+const jwt = require("jsonwebtoken");
+const voter = require("../models/voter");
+
 exports.voterlogin = async (req, res) => {
   const { email, password } = req.body;
   const eVoter = await voter.findOne({ email });
@@ -116,18 +119,15 @@ exports.voterlogin = async (req, res) => {
           expiresIn: "1y",
         }
       );
-      res.status(200).json({ token, message: "Login Succesfull" });
+      res.status(200).json({ token, voterId: eVoter._id, message: "Login Successful" });
     } else {
-      return res
-        .status(401)
-        .json({ message: "Email or password is incorrect" });
+      return res.status(401).json({ message: "Email or password is incorrect" });
     }
   } else {
-    return res.status(404).json({
-      message: "User not found",
-    });
+    return res.status(404).json({ message: "User not found" });
   }
 };
+
 exports.findUser = async (req, res) => {
   try {
     const user_ = await user.findById(req.id);
