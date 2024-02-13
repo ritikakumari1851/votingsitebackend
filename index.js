@@ -4,12 +4,23 @@ const { Server } = require("socket.io");
 const http = require("http");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const { register, login, findUser, voteregister, voterlogin, vote } = require("./src/Controllers/auth");
-const { verifyToken, validateForm, isValidated, uploadMiddleware } = require("./src/Middleware");
+const {
+  register,
+  login,
+  findUser,
+  voteregister,
+  voterlogin,
+  vote,
+} = require("./src/Controllers/auth");
+const {
+  verifyToken,
+  validateForm,
+  isValidated,
+  uploadMiddleware,
+} = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
-const voter = require("./src/model/voter");
 server.use(express.json());
 server.use(cors());
 
@@ -38,8 +49,28 @@ server.get("/get-user", verifyToken, findUser, (req, res) => {
 });
 server.post("/candidate", async (req, res) => {
   try {
-    const { full_name,Name, email, mobile_no, position, dob, about,message,BallotId } = req.body;
-    const newCandidate = new Candidate({ full_name,Name, email, mobile_no, position, dob, about,message,BallotId });
+    const {
+      full_name,
+      Name,
+      email,
+      mobile_no,
+      position,
+      dob,
+      about,
+      message,
+      BallotId,
+    } = req.body;
+    const newCandidate = new Candidate({
+      full_name,
+      Name,
+      email,
+      mobile_no,
+      position,
+      dob,
+      about,
+      message,
+      BallotId,
+    });
     await newCandidate.save();
     res.send("Data inserted");
   } catch (error) {
@@ -49,7 +80,9 @@ server.post("/candidate", async (req, res) => {
 });
 server.get("/candidate", async (req, res) => {
   try {
-    const candidates = await Candidate.find();
+    let { BallotId } = req.query;
+    BallotId = BallotId.toLowerCase(); // Convert to lowercase for case-insensitive matching
+    const candidates = await Candidate.find({ BallotId });
     res.json(candidates);
   } catch (error) {
     console.error("Error fetching candidates:", error.message);
@@ -101,7 +134,8 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose.connect(process.env.MONGO_URL)
+mongoose
+  .connect(process.env.MONGO_URL)
   .then(() => console.log("Database connected"))
   .catch((error) => console.error("Database connection error:", error));
 
