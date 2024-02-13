@@ -22,7 +22,6 @@ const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
 const voter = require("./src/model/voter");
-const voter = require("./src/model/voter");
 server.use(express.json());
 server.use(cors());
 
