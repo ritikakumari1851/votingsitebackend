@@ -111,12 +111,14 @@ server.post("/vote", async (req, res) => {
     }
 
     // Check if the candidate exists and increment their vote count
-    if (candidate) {
-      candidate.voteCount += 1;
-      await candidate.save();
-    } else {
-      return res.status(404).json({ message: "Candidate not found" });
-    }
+   // Check if the candidate exists
+if (!candidate) {
+  return res.status(404).json({ message: "Candidate not found" });
+}
+
+// Increment the candidate's vote count
+candidate.voteCount += 1;
+await candidate.save();
 
     // Update voter's status to indicate they have voted
     voter.hasVoted = true;
