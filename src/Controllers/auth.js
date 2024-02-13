@@ -117,9 +117,13 @@ exports.voterlogin = async (req, res) => {
           expiresIn: "1y",
         }
       );
-      res.status(200).json({ token, voterId: eVoter._id, message: "Login Successful" });
+      res
+        .status(200)
+        .json({ token, voterId: eVoter._id, message: "Login Successful" });
     } else {
-      return res.status(401).json({ message: "Email or password is incorrect" });
+      return res
+        .status(401)
+        .json({ message: "Email or password is incorrect" });
     }
   } else {
     return res.status(404).json({ message: "User not found" });
