@@ -21,6 +21,7 @@ const {
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
+const voter = require("./src/model/voter");
 server.use(express.json());
 server.use(cors());
 
@@ -96,7 +97,7 @@ server.post("/vote", async (req, res) => {
 
   try {
     // Find the voter and candidate
-    const voter = await Voter.findById(voterId);
+    const voter = await voter.findById(voterId);
     const candidate = await Candidate.findById(candidateId);
 
     // Check if voter and candidate exist
