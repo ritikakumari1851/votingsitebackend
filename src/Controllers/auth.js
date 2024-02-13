@@ -110,7 +110,7 @@ exports.voterlogin = async (req, res) => {
     if (eVoter.authenticate(password)) {
       const token = jwt.sign(
         {
-          id: eVoter._id,
+          id:eVoter._id,
         },
         process.env.SECRET_KEY,
         {
@@ -119,7 +119,7 @@ exports.voterlogin = async (req, res) => {
       );
       res
         .status(200)
-        .json({ token, voterId: eVoter._id, message: "Login Successful" });
+        .json({ token, voterId:eVoter._id, message: "Login Successful" });
     } else {
       return res
         .status(401)
