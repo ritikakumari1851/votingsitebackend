@@ -151,25 +151,3 @@ exports.findUser = async (req, res) => {
     });
   }
 };
-exports.vote = async (req, res) => {
-  try {
-    const { candidateId } = req.body;
-    const voterId = req.user._id; // Assuming user ID is stored in req.user
-
-    // Check if the voter has already voted
-    const existingVote = await Vote.findOne({ voterId });
-
-    if (existingVote) {
-      return res.status(400).json({ error: "You have already voted." });
-    }
-
-    // Create new vote record
-    const newVote = new Vote({ voterId, candidateId });
-    await newVote.save();
-
-    res.json({ message: "Vote cast successfully." });
-  } catch (error) {
-    console.error("Error casting vote:", error.message);
-    res.status(500).send("Internal Server Error");
-  }
-};
