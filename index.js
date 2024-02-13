@@ -96,25 +96,30 @@ server.post("/vote", async (req, res) => {
 
   try {
     // Find the voter and candidate
-    const voter = await voter.findById(voterId);
+    const voter = await Voter.findById(voterId);
     const candidate = await Candidate.findById(candidateId);
 
+    // Check if voter and candidate exist
     if (!voter || !candidate) {
       return res.status(404).json({ message: "Voter or candidate not found" });
     }
 
     // Check if the voter has already voted
-    if (voter.vote === 0) {
+    if (voter.hasVoted) {
       return res.status(400).json({ message: "Voter has already voted" });
     }
 
-    // Decrement voter's vote by 1 and increment candidate's vote by 1
-    voter.vote = 0;
-    candidate.vote += 1;
+    // Check if the candidate exists and increment their vote count
+    if (candidate) {
+      candidate.voteCount += 1;
+      await candidate.save();
+    } else {
+      return res.status(404).json({ message: "Candidate not found" });
+    }
 
-    // Save changes
+    // Update voter's status to indicate they have voted
+    voter.hasVoted = true;
     await voter.save();
-    await candidate.save();
 
     return res.status(200).json({ message: "Vote submitted successfully" });
   } catch (error) {
@@ -122,6 +127,7 @@ server.post("/vote", async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
 io.on("connection", (socket) => {
   console.log("New user connected");
   socket.on("message", (message, room) => {
