@@ -1,7 +1,10 @@
+// candidate.js
 const mongoose = require("mongoose");
+
 const candidateSchema = new mongoose.Schema({
   full_name: {
     type: String,
+    required: true,
   },
   Name: {
     type: String,
@@ -19,13 +22,18 @@ const candidateSchema = new mongoose.Schema({
     type: String,
   },
   dob: {
-    type:Date
+    type: Date,
   },
-  message:{
-    type:String
+  message: {
+    type: String,
   },
-  BallotId:{
-    type:Number
-  }
+  BallotId: {
+    type: Number,
+  },
+  voteCount: {
+    type: Number,
+    default: 0,
+  },
 });
-module.exports = mongoose.model("candidate", candidateSchema);
+
+module.exports = mongoose.model("Candidate", candidateSchema);

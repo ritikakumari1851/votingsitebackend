@@ -4,15 +4,15 @@ const mongoose = require("mongoose");
 const voteSchema = new mongoose.Schema({
   voterId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Voter",
+    ref: 'Voter',
     required: true
   },
   candidateId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Candidate",
+    ref: 'Candidate',
     required: true
   },
-  timestamp: {
+  createdAt: {
     type: Date,
     default: Date.now
   }

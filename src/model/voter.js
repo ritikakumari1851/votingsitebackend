@@ -1,6 +1,7 @@
-// user.js
+// voter.js
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+
 const voterSchema = new mongoose.Schema({
   full_name: {
     type: String,
@@ -28,7 +29,12 @@ const voterSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  hasVoted: {
+    type: Boolean,
+    default: false,
+  },
 });
+
 voterSchema.virtual("password").set(function (password) {
   if (!password) {
     return;
@@ -41,4 +47,5 @@ voterSchema.methods = {
     return bcrypt.compareSync(password, this.hash_password);
   },
 };
-module.exports = mongoose.model("voter", voterSchema);
+
+module.exports = mongoose.model("Voter", voterSchema);
