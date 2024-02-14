@@ -16,12 +16,10 @@ const {
   verifyToken,
   validateForm,
   isValidated,
-  uploadMiddleware,
 } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
-const voter = require("./src/model/voter");
 server.use(express.json());
 server.use(cors());
 
@@ -79,6 +77,7 @@ server.post("/candidate", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 server.get("/candidate", async (req, res) => {
   try {
     let { BallotId } = req.query;
@@ -90,42 +89,10 @@ server.get("/candidate", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
-server.post("/vote", async (req, res) => {
-  const { voterId, candidateId } = req.body;
-
-  try {
-    // Find the voter and candidate
-    const voter = await voter.findById(voterId);
-    const candidate = await Candidate.findById(candidateId);
-
-    // Check if voter and candidate exist
-    if (!voter || !candidate) {
-      return res.status(404).json({ message: "Voter or candidate not found" });
-    }
-
-    // Check if the voter has already voted
-    if (voter.hasVoted) {
-      return res.status(400).json({ message: "Voter has already voted" });
-    }
-
-    // Increment the candidate's vote count
-    candidate.voteCount += 1;
-    await candidate.save();
-
-    // Update voter's status to indicate they have voted
-    voter.hasVoted = true;
-    await voter.save();
-
-    return res.status(200).json({ message: "Vote submitted successfully" });
-  } catch (error) {
-    console.error("Error submitting vote:", error);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-
+server.post("/vote" , vote);
 io.on("connection", (socket) => {
   console.log("New user connected");
   socket.on("message", (message, room) => {
