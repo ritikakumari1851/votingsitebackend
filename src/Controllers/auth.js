@@ -159,6 +159,7 @@ exports.findUser = async (req, res) => {
 const Vote = require('../model/vote');
 const Candidate = require("../model/candidate");
 const Voter = require("../model/voter");
+const voter = require("../model/voter");
 
 exports.vote = async (req, res) => {
   const { voterId, candidateId } = req.body;
