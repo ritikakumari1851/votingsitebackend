@@ -21,7 +21,7 @@ exports.register = async (req, res, next) => {
       .then(() => {
         // return res.status(201).json({newUser,message:"Sucessfully"})
         (req.subject = "User Registration"),
-          (req.text = "You have sucessfully Registered to VoteOnclick.");
+          (req.text = "You have sucessfully Registered to VoteOnclick As a Admin Now You are eligible to organise elections of your choice.");
 
         next();
       })
