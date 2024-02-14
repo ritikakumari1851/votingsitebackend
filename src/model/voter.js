@@ -28,11 +28,6 @@ const voterSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  vote: 
-  { 
-    type: Number,
-     default: 1 
-    }
 });
 voterSchema.virtual("password").set(function (password) {
   if (!password) {

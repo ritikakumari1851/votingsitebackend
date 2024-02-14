@@ -26,7 +26,6 @@ const candidateSchema = new mongoose.Schema({
   },
   BallotId:{
     type:Number
-  },
-  vote: { type: Number, default: 0 }
+  }
 });
 module.exports = mongoose.model("candidate", candidateSchema);

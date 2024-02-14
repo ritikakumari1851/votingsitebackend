@@ -154,31 +154,36 @@ exports.findUser = async (req, res) => {
     });
   }
 };
-const Voter = require('../model/voter'); // Assuming your model is exported as Voter
-const Candidate = require('../model/candidate'); // Assuming your model is exported as Candidate
+ // Assuming your model is exported as Candidate
+// Import the Vote model
+const Vote = require('../model/vote');
+const Candidate = require("../model/candidate");
+const voter = require("../model/voter");
 
 exports.vote = async (req, res) => {
   const { voterId, candidateId } = req.body;
   try {
-    // Find the voter and candidate
-    const voter = await Voter.findById(voterId);
+    // Create a new vote document
+    const vote = new Vote({ voterId, candidateId });
+
+    // Save the vote to the database
+    await vote.save();
+
+    // Find the candidate and increment the vote count
     const candidate = await Candidate.findById(candidateId);
-
-    // Check if voter and candidate exist
-    if (!voter || !candidate) {
-      return res.status(404).json({ message: "Voter or candidate not found" });
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate not found" });
     }
-
-    // Check if the voter has already voted
-    if (voter.hasVoted) {
-      return res.status(400).json({ message: "Voter has already voted" });
-    }
-
-    // Increment the candidate's vote count
     candidate.voteCount += 1;
     await candidate.save();
 
     // Update voter's status to indicate they have voted
+    const voter = await voter.findById(voterId);
+    if (!voter) {
+      // If voter doesn't exist, delete the vote and return an error
+      await Vote.findByIdAndDelete(vote._id);
+      return res.status(404).json({ message: "Voter not found" });
+    }
     voter.hasVoted = true;
     await voter.save();
 
