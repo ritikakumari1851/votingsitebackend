@@ -20,9 +20,8 @@ exports.register = async (req, res, next) => {
       .save()
       .then(() => {
         // return res.status(201).json({newUser,message:"Sucessfully"})
-        (req.subject = "User Registration"),
-          (req.text = "You have sucessfully Registered to VoteOnclick As a Admin Now You are eligible to organise elections of your choice.");
-
+        req.subject = "User Registration",
+        req.text = "You have sucessfully signed up to Voteonclick, Now you are free to organize elections."
         next();
       })
       .catch((error) => {
