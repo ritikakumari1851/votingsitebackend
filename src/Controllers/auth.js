@@ -1,8 +1,6 @@
 //auth.js
 const user = require("../model/user");
 const jwt = require("jsonwebtoken");
-const voter = require("../model/voter");
-const candidate = require("../model/candidate");
 exports.register = async (req, res, next) => {
   const { full_name, email, password, username, Dob, gender } = req.body;
   const _user = new user({
@@ -156,27 +154,34 @@ exports.findUser = async (req, res) => {
     });
   }
 };
+const Voter = require('../model/voter'); // Assuming your model is exported as Voter
+const Candidate = require('../model/candidate'); // Assuming your model is exported as Candidate
+
 exports.vote = async (req, res) => {
   const { voterId, candidateId } = req.body;
   try {
     // Find the voter and candidate
-    const voter = await voter.findById(voterId);
-    const candidate = await candidate.findById(candidateId);
+    const voter = await Voter.findById(voterId);
+    const candidate = await Candidate.findById(candidateId);
 
     // Check if voter and candidate exist
     if (!voter || !candidate) {
       return res.status(404).json({ message: "Voter or candidate not found" });
     }
+
     // Check if the voter has already voted
     if (voter.hasVoted) {
       return res.status(400).json({ message: "Voter has already voted" });
     }
+
     // Increment the candidate's vote count
     candidate.voteCount += 1;
     await candidate.save();
+
     // Update voter's status to indicate they have voted
     voter.hasVoted = true;
     await voter.save();
+
     return res.status(200).json({ message: "Vote submitted successfully" });
   } catch (error) {
     console.error("Error submitting vote:", error);
