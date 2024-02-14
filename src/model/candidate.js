@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const candidateSchema = new mongoose.Schema({
   full_name: {
     type: String,
-    required: true,
+   
   },
   Name: {
     type: String,
