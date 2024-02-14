@@ -40,7 +40,7 @@ exports.register = async (req, res, next) => {
 exports.voteregister = async (req, res) => {
   const { full_name, email, username, Dob, gender, mobile_no, password } =
     req.body;
-  const _voter = new voter({
+  const _voter = new Voter({
     full_name: full_name,
     email: email,
     username: username,
