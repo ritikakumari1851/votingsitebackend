@@ -3,7 +3,6 @@ const user = require("../model/user");
 const jwt = require("jsonwebtoken");
 const voter = require("../model/voter");
 const candidate = require("../model/candidate");
-const voter = require("../model/voter");
 exports.register = async (req, res, next) => {
   const { full_name, email, password, username, Dob, gender } = req.body;
   const _user = new user({
