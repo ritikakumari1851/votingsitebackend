@@ -102,7 +102,34 @@ server.delete("/candidate/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+server.get("/candidates-with-total-votes", async (req, res) => {
+  try {
+    // Aggregate to calculate total votes for each candidate
+    const candidatesWithTotalVotes = await Candidate.aggregate([
+      {
+        $lookup: {
+          from: "votes", // Assuming you have a collection named "votes"
+          localField: "_id",
+          foreignField: "candidateId",
+          as: "votes",
+        },
+      },
+      {
+        $project: {
+          full_name: 1,
+          position: 1,
+          about: 1,
+          totalVotes: { $size: "$votes" }, // Calculate total votes
+        },
+      },
+    ]);
 
+    res.json(candidatesWithTotalVotes);
+  } catch (error) {
+    console.error("Error fetching candidates with total votes:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 
 server.post("/login", login);
