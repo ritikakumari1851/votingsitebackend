@@ -20,8 +20,9 @@ exports.register = async (req, res, next) => {
       .save()
       .then(() => {
         // return res.status(201).json({newUser,message:"Sucessfully"})
-        req.subject = "User Registration",
-        req.text = "You have sucessfully signed up to Voteonclick, Now you are free to organize elections."
+        (req.subject = "User Registration"),
+          (req.text =
+            "You have sucessfully signed up to Voteonclick, Now you are free to organize elections.");
         next();
       })
       .catch((error) => {
@@ -108,7 +109,7 @@ exports.voterlogin = async (req, res) => {
     if (eVoter.authenticate(password)) {
       const token = jwt.sign(
         {
-          id:eVoter._id,
+          id: eVoter._id,
         },
         process.env.SECRET_KEY,
         {
@@ -117,7 +118,7 @@ exports.voterlogin = async (req, res) => {
       );
       res
         .status(200)
-        .json({ token, voterId:eVoter._id, message: "Login Successful" });
+        .json({ token, voterId: eVoter._id, message: "Login Successful" });
     } else {
       return res
         .status(401)
@@ -153,9 +154,9 @@ exports.findUser = async (req, res) => {
     });
   }
 };
- // Assuming your model is exported as Candidate
+// Assuming your model is exported as Candidate
 // Import the Vote model
-const Vote = require('../model/vote');
+const Vote = require("../model/vote");
 const Candidate = require("../model/candidate");
 const Voter = require("../model/voter");
 const voter = require("../model/voter");
@@ -188,8 +189,11 @@ exports.vote = async (req, res) => {
     await existingVoter.save();
 
     return res.status(200).json({ message: "Vote submitted successfully" });
-  }catch (error) {
+  } catch (error) {
     console.error("Error submitting vote:", error);
-    return res.status(500).json({ message: "Internal server error", error: error.toString() });
-}
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.toString() });
+  }
 };
+

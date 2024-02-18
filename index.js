@@ -89,6 +89,21 @@ server.get("/candidate", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+server.delete("/candidate/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const candidate = await Candidate.findByIdAndDelete(id);
+    if (!candidate) {
+      return res.status(404).json({ error: "Candidate not found" });
+    }
+    res.json({ message: "Candidate deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting candidate:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
 
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
