@@ -104,11 +104,18 @@ server.delete("/candidate/:id", async (req, res) => {
 });
 server.get("/candidates-with-total-votes", async (req, res) => {
   try {
-    // Aggregate to calculate total votes for each candidate
+    const { ballotId } = req.query; // Extract ballotId from query parameters
+
+    // Match candidates based on the provided ballotId
     const candidatesWithTotalVotes = await Candidate.aggregate([
       {
+        $match: {
+          ballotId: mongoose.Types.ObjectId(ballotId) // Assuming ballotId is stored as ObjectId in the database
+        }
+      },
+      {
         $lookup: {
-          from: "votes", // Assuming you have a collection named "votes"
+          from: "votes",
           localField: "_id",
           foreignField: "candidateId",
           as: "votes",
@@ -119,7 +126,7 @@ server.get("/candidates-with-total-votes", async (req, res) => {
           full_name: 1,
           position: 1,
           about: 1,
-          totalVotes: { $size: "$votes" }, // Calculate total votes
+          totalVotes: { $size: "$votes" },
         },
       },
     ]);
