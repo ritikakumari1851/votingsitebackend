@@ -12,11 +12,7 @@ const {
   voterlogin,
   vote,
 } = require("./src/Controllers/auth");
-const {
-  verifyToken,
-  validateForm,
-  isValidated,
-} = require("./src/Middleware");
+const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
@@ -102,46 +98,10 @@ server.delete("/candidate/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-server.get("/candidates-with-total-votes", async (req, res) => {
-  try {
-    let { BallotId } = req.query;
-    BallotId = BallotId.toLowerCase(); // Convert to lowercase for case-insensitive matching
-    
-    // Aggregate to calculate total votes for candidates with the given ballotId
-    const candidatesWithTotalVotes = await Candidate.aggregate([
-      {
-        $match: { BallotId: BallotId } // Filter candidates by ballotId
-      },
-      {
-        $lookup: {
-          from: "votes", // Assuming you have a collection named "votes"
-          localField: "_id",
-          foreignField: "candidateId",
-          as: "votes",
-        },
-      },
-      {
-        $project: {
-          full_name: 1,
-          position: 1,
-          about: 1,
-          totalVotes: { $size: "$votes" }, // Calculate total votes
-        },
-      },
-    ]);
-
-    res.json(candidatesWithTotalVotes);
-  } catch (error) {
-    console.error("Error fetching candidates with total votes:", error.message);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-
 
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
-server.post("/vote" , vote);
+server.post("/vote", vote);
 io.on("connection", (socket) => {
   console.log("New user connected");
   socket.on("message", (message, room) => {
@@ -152,6 +112,34 @@ io.on("connection", (socket) => {
     socket.join(room);
     socket.emit("joined");
   });
+});
+// Express route for fetching candidate list and total votes
+app.get("/api/result", async (req, res) => {
+  const { BallotId } = req.query;
+  try {
+    // Fetch candidate list based on Ballot ID
+    const candidatesResponse = await Axios.get(
+      `https://voteonclickbackend.onrender.com/result?BallotId=${BallotId}`
+    );
+    const candidates = candidatesResponse.data.map((candidate) => ({
+      _id: candidate._id,
+      full_name: candidate.full_name,
+      position: candidate.position,
+      votes: candidate.voteCount,
+    }));
+
+    // Calculate total votes for all candidates
+    const totalVotes = candidates.reduce(
+      (total, candidate) => total + candidate.votes,
+      0
+    );
+
+    // Send response with candidate list, total votes, and selected candidate fields
+    res.json({ candidates, totalVotes });
+  } catch (error) {
+    console.error("Error fetching candidates:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 mongoose
