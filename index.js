@@ -111,10 +111,18 @@ server.get("/candidates-with-total-votes", async (req, res) => {
       return res.status(400).json({ message: "Ballot ID is required" });
     }
 
+    // Attempt to convert the provided ballotId to a valid ObjectId
+    let objectIdBallotId;
+    try {
+      objectIdBallotId = mongoose.Types.ObjectId(ballotId);
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid Ballot ID format" });
+    }
+
     // Aggregate to calculate total votes for candidates with the given ballot ID
     const candidatesWithTotalVotes = await Candidate.aggregate([
       {
-        $match: { ballotId: mongoose.Types.ObjectId(ballotId) } // Filter candidates by ballotId
+        $match: { ballotId: objectIdBallotId } // Filter candidates by ballotId
       },
       {
         $lookup: {
