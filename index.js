@@ -114,7 +114,7 @@ io.on("connection", (socket) => {
   });
 });
 // Express route for fetching candidate list and total votes
-app.get("/api/result", async (req, res) => {
+server.get("/api/result", async (req, res) => {
   const { BallotId } = req.query;
   try {
     // Fetch candidate list based on Ballot ID
