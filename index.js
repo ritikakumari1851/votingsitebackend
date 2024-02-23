@@ -137,8 +137,8 @@ server.get("/api/result", async (req, res) => {
     // Send response with candidate list, total votes, and selected candidate fields
     res.json({ candidates, totalVotes });
   } catch (error) {
-    console.error("Error fetching candidates:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching candidates:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
