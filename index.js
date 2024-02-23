@@ -4,6 +4,7 @@ const { Server } = require("socket.io");
 const http = require("http");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const Axios = require("axios")
 const {
   register,
   login,
