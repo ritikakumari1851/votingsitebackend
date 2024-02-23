@@ -104,8 +104,14 @@ server.delete("/candidate/:id", async (req, res) => {
 });
 server.get("/candidates-with-total-votes", async (req, res) => {
   try {
-    // Aggregate to calculate total votes for each candidate
+    let { BallotId } = req.query;
+    BallotId = BallotId.toLowerCase(); // Convert to lowercase for case-insensitive matching
+    
+    // Aggregate to calculate total votes for candidates with the given ballotId
     const candidatesWithTotalVotes = await Candidate.aggregate([
+      {
+        $match: { BallotId: BallotId } // Filter candidates by ballotId
+      },
       {
         $lookup: {
           from: "votes", // Assuming you have a collection named "votes"
@@ -130,6 +136,7 @@ server.get("/candidates-with-total-votes", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 
 server.post("/login", login);
