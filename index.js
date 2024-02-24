@@ -122,6 +122,13 @@ server.get("/api/result", async (req, res) => {
     const candidatesResponse = await Axios.get(
       `https://voteonclickbackend.onrender.com/result?BallotId=${BallotId}`
     );
+
+    // Check if candidatesResponse.data is an array
+    if (!Array.isArray(candidatesResponse.data)) {
+      throw new Error("Candidate data is not in the expected format");
+    }
+
+    // Map candidates only if candidatesResponse.data is an array
     const candidates = candidatesResponse.data.map((candidate) => ({
       _id: candidate._id,
       full_name: candidate.full_name,
