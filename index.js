@@ -99,7 +99,19 @@ server.delete("/candidate/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
+router.get('/result/:ballotId', async (req, res) => {
+  try {
+    const { ballotId } = req.params;
+    // Fetch candidates and their votes from the database
+    const candidates = await Candidate.find({ ballotId });
+    // Calculate total votes
+    const totalVotes = candidates.reduce((total, candidate) => total + candidate.votes, 0);
+    res.json({ candidates, totalVotes });
+  } catch (error) {
+    console.error('Error fetching result:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
 server.post("/vote", vote);
@@ -114,42 +126,6 @@ io.on("connection", (socket) => {
     socket.emit("joined");
   });
 });
-// Express route for fetching candidate list and total votes
-server.get("/api/result", async (req, res) => {
-  const { BallotId } = req.query;
-  try {
-    // Fetch candidate list based on Ballot ID
-    const candidatesResponse = await Axios.get(
-      `https://voteonclickbackend.onrender.com/result?BallotId=${BallotId}`
-    );
-
-    // Check if candidatesResponse.data is an array
-    if (!Array.isArray(candidatesResponse.data)) {
-      throw new Error("Candidate data is not in the expected format");
-    }
-
-    // Map candidates only if candidatesResponse.data is an array
-    const candidates = candidatesResponse.data.map((candidate) => ({
-      _id: candidate._id,
-      full_name: candidate.full_name,
-      position: candidate.position,
-      votes: candidate.voteCount,
-    }));
-
-    // Calculate total votes for all candidates
-    const totalVotes = candidates.reduce(
-      (total, candidate) => total + candidate.votes,
-      0
-    );
-
-    // Send response with candidate list, total votes, and selected candidate fields
-    res.json({ candidates, totalVotes });
-  } catch (error) {
-    console.error("Error fetching candidates:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Database connected"))
