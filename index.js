@@ -99,7 +99,7 @@ server.delete("/candidate/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-router.get('/result/:ballotId', async (req, res) => {
+server.get('/result/:ballotId', async (req, res) => {
   try {
     const { ballotId } = req.params;
     // Fetch candidates and their votes from the database
