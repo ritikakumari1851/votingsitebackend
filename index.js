@@ -103,15 +103,21 @@ server.get('/result/:ballotId', async (req, res) => {
   try {
     const { ballotId } = req.params;
     // Fetch candidates and their votes from the database
-    const candidates = await Candidate.find({ ballotId });
+    const candidates = await Candidate.find({ BallotId: ballotId });
+
     // Calculate total votes
-    const totalVotes = candidates.reduce((total, candidate) => total + candidate.votes, 0);
+    let totalVotes = 0;
+    for (const candidate of candidates) {
+      totalVotes += candidate.voteCount;
+    }
+
     res.json({ candidates, totalVotes });
   } catch (error) {
     console.error('Error fetching result:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
 server.post("/vote", vote);
