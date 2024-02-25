@@ -119,8 +119,17 @@ server.get('/result/:ballotId', async (req, res) => {
   try {
     const { ballotId } = req.params;
 
+    // Get all candidates for the given ballotId
+    const allCandidates = await Candidate.find({ BallotId: ballotId });
+
+    // Create an array to store the result with default vote count of 0 for all candidates
+    const result = allCandidates.map(candidate => ({
+      _id: candidate._id,
+      totalVotes: 0
+    }));
+
     // Query the database to aggregate total votes for each candidate associated with the provided ballot ID
-    const result = await Vote.aggregate([
+    const votes = await Vote.aggregate([
       {
         $match: { ballotId: mongoose.Types.ObjectId(ballotId) }
       },
@@ -132,23 +141,16 @@ server.get('/result/:ballotId', async (req, res) => {
       }
     ]);
 
-    // If no votes are found for the provided ballot ID, return a 404 response
-    if (!result || result.length === 0) {
-      return res.status(404).json({ message: "No votes found for the provided ballot ID" });
-    }
-
-    // Map the result to include candidate names
-    const resultWithNames = await Promise.all(result.map(async item => {
-      const candidate = await Candidate.findById(item._id);
-      return {
-        id: item._id,
-        name: candidate ? candidate.full_name : "Unknown Candidate",
-        totalVotes: item.totalVotes
-      };
-    }));
+    // Update the result array with actual vote counts
+    votes.forEach(vote => {
+      const candidateIndex = result.findIndex(candidate => candidate._id.equals(vote._id));
+      if (candidateIndex !== -1) {
+        result[candidateIndex].totalVotes = vote.totalVotes;
+      }
+    });
 
     // Return the result
-    return res.status(200).json({ result: resultWithNames });
+    return res.status(200).json({ result });
   } catch (error) {
     console.error("Error fetching result:", error); // Log the error message
     return res.status(500).json({ message: "Internal Server Error" });
