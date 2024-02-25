@@ -196,6 +196,9 @@ exports.vote = async (req, res) => {
       .json({ message: "Internal server error", error: error.toString() });
   }
 };
+const Candidate = require("../model/candidate");
+const Vote = require("../model/vote");
+
 exports.getResult = async (req, res) => {
   try {
     // Extract the ballotId from the request parameters
@@ -219,7 +222,7 @@ exports.getResult = async (req, res) => {
       return res.status(404).json({ message: "No votes found for the provided ballot ID" });
     }
 
-    // Map the result to include candidate names (assuming you have a Candidate model)
+    // Map the result to include candidate names
     const resultWithNames = await Promise.all(result.map(async item => {
       const candidate = await Candidate.findById(item._id);
       return {
