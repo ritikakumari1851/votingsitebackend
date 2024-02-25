@@ -12,6 +12,7 @@ const {
   voteregister,
   voterlogin,
   vote,
+  getResult,
 } = require("./src/Controllers/auth");
 const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
@@ -102,7 +103,7 @@ server.delete("/candidate/:id", async (req, res) => {
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
 server.post("/vote", vote);
-server.get("/result/:ballotId", resultController.getResult);
+server.get("/result/:ballotId", getResult);
 io.on("connection", (socket) => {
   console.log("New user connected");
   socket.on("message", (message, room) => {
