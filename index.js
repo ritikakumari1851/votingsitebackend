@@ -115,7 +115,7 @@ io.on("connection", (socket) => {
   });
 });
 // Define route to handle fetching candidate information and total votes for a given ballot ID
-app.get('/result/:ballotId', async (req, res) => {
+server.get('/result/:ballotId', async (req, res) => {
   try {
     const { ballotId } = req.params;
 
