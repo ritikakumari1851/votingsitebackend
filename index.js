@@ -103,7 +103,7 @@ server.delete("/candidate/:id", async (req, res) => {
 server.post("/login", login);
 server.post("/addform", validateForm, isValidated, addForm, sendEmail);
 server.post("/vote", vote);
-server.get("/result/:ballotId", getResult);
+server.get("/result/:BallotId", getResult);
 io.on("connection", (socket) => {
   console.log("New user connected");
   socket.on("message", (message, room) => {

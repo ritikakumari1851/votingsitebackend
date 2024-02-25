@@ -160,8 +160,6 @@ exports.findUser = async (req, res) => {
 const Vote = require("../model/vote");
 const Candidate = require("../model/candidate");
 const Voter = require("../model/voter");
-const voter = require("../model/voter");
-const candidate = require("../model/candidate");
 
 exports.vote = async (req, res) => {
   const { voterId, candidateId } = req.body;
@@ -203,28 +201,40 @@ exports.getResult = async (req, res) => {
     // Extract the ballotId from the request parameters
     const { ballotId } = req.params;
 
-    // Query the database to find the ballot
-    const ballot = await candidate.findById(ballotId);
+    // Aggregate the total votes for each candidate
+    const result = await Vote.aggregate([
+      {
+        $match: { ballotId: mongoose.Types.ObjectId(ballotId) }
+      },
+      {
+        $group: {
+          _id: "$candidateId",
+          totalVotes: { $sum: 1 }
+        }
+      }
+    ]);
 
-    if (!ballot) {
-      return res.status(404).json({ message: "Ballot not found" });
+    // If no votes are found for the provided ballot ID, return a 404 response
+    if (!result || result.length === 0) {
+      return res.status(404).json({ message: "No votes found for the provided ballot ID" });
     }
 
-    // Query the candidates collection to find candidates associated with the provided ballotId
-    const candidates = await Candidate.find({ ballotId });
-
-    // Prepare the result data
-    const result = candidates.map(candidate => ({
-      id: candidate._id,
-      name: candidate.full_name,
-      totalVotes: candidate.voteCount
+    // Map the result to include candidate names (assuming you have a Candidate model)
+    const resultWithNames = await Promise.all(result.map(async item => {
+      const candidate = await Candidate.findById(item._id);
+      return {
+        id: item._id,
+        name: candidate ? candidate.full_name : "Unknown Candidate",
+        totalVotes: item.totalVotes
+      };
     }));
 
     // Return the result
-    return res.status(200).json({ result });
+    return res.status(200).json({ result: resultWithNames });
   } catch (error) {
     console.error("Error fetching result:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
