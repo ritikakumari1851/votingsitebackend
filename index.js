@@ -17,7 +17,7 @@ const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
-const Vote = require("./src/model")
+const Vote = require("./src/model/vote")
 server.use(express.json());
 server.use(cors());
 
