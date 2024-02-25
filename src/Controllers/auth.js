@@ -1,6 +1,7 @@
 //auth.js
 const user = require("../model/user");
 const jwt = require("jsonwebtoken");
+
 exports.register = async (req, res, next) => {
   const { full_name, email, password, username, Dob, gender } = req.body;
   const _user = new user({
@@ -160,6 +161,7 @@ const Vote = require("../model/vote");
 const Candidate = require("../model/candidate");
 const Voter = require("../model/voter");
 const voter = require("../model/voter");
+const candidate = require("../model/candidate");
 
 exports.vote = async (req, res) => {
   const { voterId, candidateId } = req.body;
@@ -194,6 +196,35 @@ exports.vote = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Internal server error", error: error.toString() });
+  }
+};
+exports.getResult = async (req, res) => {
+  try {
+    // Extract the ballotId from the request parameters
+    const { ballotId } = req.params;
+
+    // Query the database to find the ballot
+    const ballot = await candidate.findById(ballotId);
+
+    if (!ballot) {
+      return res.status(404).json({ message: "Ballot not found" });
+    }
+
+    // Query the candidates collection to find candidates associated with the provided ballotId
+    const candidates = await Candidate.find({ ballotId });
+
+    // Prepare the result data
+    const result = candidates.map(candidate => ({
+      id: candidate._id,
+      name: candidate.full_name,
+      totalVotes: candidate.voteCount
+    }));
+
+    // Return the result
+    return res.status(200).json({ result });
+  } catch (error) {
+    console.error("Error fetching result:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
