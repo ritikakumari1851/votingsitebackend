@@ -114,7 +114,8 @@ io.on("connection", (socket) => {
     socket.emit("joined");
   });
 });
-server.get('/result/:ballotId', async (req, res) => {
+// Define route to handle fetching candidate information and total votes for a given ballot ID
+app.get('/result/:ballotId', async (req, res) => {
   try {
     const { ballotId } = req.params;
 
@@ -149,10 +150,11 @@ server.get('/result/:ballotId', async (req, res) => {
     // Return the result
     return res.status(200).json({ result: resultWithNames });
   } catch (error) {
-    console.error("Error fetching result:", error);
+    console.error("Error fetching result:", error); // Log the error message
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Database connected"))
