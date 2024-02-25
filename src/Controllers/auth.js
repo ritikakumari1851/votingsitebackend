@@ -196,8 +196,7 @@ exports.vote = async (req, res) => {
       .json({ message: "Internal server error", error: error.toString() });
   }
 };
-const Candidate = require("../model/candidate");
-const Vote = require("../model/vote");
+
 
 exports.getResult = async (req, res) => {
   try {
