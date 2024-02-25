@@ -12,12 +12,12 @@ const {
   voteregister,
   voterlogin,
   vote,
-  getResult,
 } = require("./src/Controllers/auth");
 const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
+const Vote = require("./src/model")
 server.use(express.json());
 server.use(cors());
 
