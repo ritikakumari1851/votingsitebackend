@@ -160,7 +160,7 @@ server.get('/result/:ballotId', async (req, res) => {
     }
 
     // Add more specific error handling as needed...
-
+    console.log(message.error)
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
