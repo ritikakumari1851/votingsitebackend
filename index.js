@@ -159,8 +159,7 @@ server.get('/result/:ballotId', async (req, res) => {
       return res.status(400).json({ message: "Invalid Ballot ID" });
     }
 
-    // Add more specific error handling as needed...
-    console.log(message.error)
+
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
