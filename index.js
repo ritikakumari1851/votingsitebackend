@@ -152,7 +152,15 @@ server.get('/result/:ballotId', async (req, res) => {
     // Return the result
     return res.status(200).json({ result });
   } catch (error) {
-    console.error("Error fetching result:", error); // Log the error message
+    console.error("Error fetching result:", error);
+
+    // Check for specific types of errors
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+      return res.status(400).json({ message: "Invalid Ballot ID" });
+    }
+
+    // Add more specific error handling as needed...
+
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
