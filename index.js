@@ -5,7 +5,6 @@ const http = require("http");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const Axios = require("axios")
-const objectId = new mongoose.Types.ObjectId();
 const {
   register,
   login,
@@ -132,7 +131,7 @@ server.get('/result/:ballotId', async (req, res) => {
     // Query the database to aggregate total votes for each candidate associated with the provided ballot ID
     const votes = await Vote.aggregate([
       {
-        $match: { ballotId: objectId(ballotId) }
+        $match: { ballotId: new mongoose.Types.ObjectId(ballotId) }
       },
       {
         $group: {
