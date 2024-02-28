@@ -50,7 +50,7 @@ exports.voteregister = async (req, res) => {
     mobile_no: mobile_no,
     password,
   });
-  const eVoter = await voter.findOne({ email });
+  const eVoter = await vote.findOne({ email });
 
   console.log(eVoter);
 
@@ -160,7 +160,7 @@ exports.findUser = async (req, res) => {
 const Vote = require("../model/vote");
 const Candidate = require("../model/candidate");
 const Voter = require("../model/voter");
-const voter = require("../model/voter");
+const vote = require("../model/vote");
 
 exports.vote = async (req, res) => {
   const { voterId, candidateId } = req.body;

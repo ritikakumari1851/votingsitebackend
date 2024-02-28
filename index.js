@@ -38,6 +38,7 @@ require("dotenv").config();
 server.post("/register", register, sendEmail);
 server.post("/voteregister", voteregister);
 server.post("/voterlogin", voterlogin);
+server.post("/login",login)
 server.get("/get-user", verifyToken, findUser, (req, res) => {
   if (!req.user) {
     return res.status(404).json({ error: "User not found" });
