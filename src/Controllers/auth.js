@@ -161,7 +161,17 @@ const Vote = require("../model/vote");
 const Candidate = require("../model/candidate");
 const Voter = require("../model/voter");
 const vote = require("../model/vote");
-
+exports.Candidate = async(req,res)=>{
+  const { BallotId } = req.query; // Extract ballot ID from query parameters
+  try {
+    // Find candidates based on the provided ballot ID
+    const candidates = await Candidate.find({ BallotId });
+    res.json(candidates);
+  } catch (error) {
+    console.error("Error fetching candidates:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 exports.vote = async (req, res) => {
   const { voterId, candidateId } = req.body;
   try {
