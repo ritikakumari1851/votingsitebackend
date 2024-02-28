@@ -12,12 +12,14 @@ const {
   voteregister,
   voterlogin,
   vote,
+  voters,
 } = require("./src/Controllers/auth");
 const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Candidate = require("./src/model/candidate");
-const Vote = require("./src/model/vote")
+const Vote = require("./src/model/vote");
+const voter = require("./src/model/voter");
 server.use(express.json());
 server.use(cors());
 
@@ -113,6 +115,8 @@ server.get('/result/:ballotId', async (req, res) => {
 });
 
 // Define route to handle fetching candidate information and total votes for a given ballot ID
+server.get('/voters',voters)
+
 
 mongoose
   .connect(process.env.MONGO_URL)

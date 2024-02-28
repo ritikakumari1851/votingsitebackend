@@ -197,5 +197,14 @@ exports.vote = async (req, res) => {
       .json({ message: "Internal server error", error: error.toString() });
   }
 };
+exports.voters= async(req,res)=>{
+  try {
+    const voters = await Voter.find();
+    res.status(200).json({ voters });
+  } catch (error) {
+    console.error("Error fetching voters data:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}; 
 
 
