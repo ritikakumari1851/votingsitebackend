@@ -4,16 +4,14 @@ const { Server } = require("socket.io");
 const http = require("http");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const Axios = require("axios")
 const {
   register,
   login,
   findUser,
   voteregister,
   voterlogin,
-  vote,
   voters,
-  Candidate
+  Candidate,
 } = require("./src/Controllers/auth");
 const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
@@ -115,7 +113,7 @@ server.get('/result/:ballotId', async (req, res) => {
 
 // Define route to handle fetching candidate information and total votes for a given ballot ID
 server.get('/voters',voters)
-server.get('/Canndidate',Candidate)
+server.get('/candidate',Candidate)
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Database connected"))
