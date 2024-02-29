@@ -12,6 +12,7 @@ const {
   voterlogin,
   voters,
   Candidate,
+  vote,
 } = require("./src/Controllers/auth");
 const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
@@ -45,6 +46,7 @@ server.get("/get-user", verifyToken, findUser, (req, res) => {
   }
   res.json({ user: req.user });
 });
+server.post('/vote',vote)
 server.post("/candidate", async (req, res) => {
   try {
     const {
