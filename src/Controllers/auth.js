@@ -161,6 +161,7 @@ const Vote = require("../model/vote");
 const Candidate = require("../model/candidate");
 const Voter = require("../model/voter");
 const vote = require("../model/vote");
+const voter = require("../model/voter");
 exports.Candidate = async(req,res)=>{
   const { BallotId } = req.query; // Extract ballot ID from query parameters
   try {
