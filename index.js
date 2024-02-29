@@ -17,6 +17,7 @@ const { verifyToken, validateForm, isValidated } = require("./src/Middleware");
 const { addForm } = require("./src/Controllers/form");
 const { sendEmail } = require("./src/helper/Email");
 const Vote = require("./src/model/vote");
+const candidate = require("./src/model/candidate");
 server.use(express.json());
 server.use(cors());
 
@@ -57,7 +58,7 @@ server.post("/candidate", async (req, res) => {
       message,
       BallotId,
     } = req.body;
-    const newCandidate = new Candidate({
+    const newCandidate = new candidate({
       full_name,
       Name,
       email,
