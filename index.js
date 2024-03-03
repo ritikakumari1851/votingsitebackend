@@ -39,14 +39,14 @@ require("dotenv").config();
 server.post("/register", register, sendEmail);
 server.post("/voteregister", voteregister);
 server.post("/voterlogin", voterlogin);
-server.post("/login",login)
+server.post("/login", login);
 server.get("/get-user", verifyToken, findUser, (req, res) => {
   if (!req.user) {
     return res.status(404).json({ error: "User not found" });
   }
   res.json({ user: req.user });
 });
-server.post('/vote',vote)
+server.post("/vote", vote);
 server.post("/candidate", async (req, res) => {
   try {
     const {
@@ -80,7 +80,7 @@ server.post("/candidate", async (req, res) => {
 });
 
 // Define route to handle fetching candidate information and total votes for a given ballot ID
-server.get('/result/:ballotId', async (req, res) => {
+server.get("/result/:ballotId", async (req, res) => {
   try {
     const { ballotId } = req.params;
 
@@ -116,15 +116,15 @@ server.get('/result/:ballotId', async (req, res) => {
 server.delete("/candidate/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    await Candidate.findByIdAndDelete(id);
+    await Candidate.deleteOne(id);
     res.json({ message: "Candidate deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 // Define route to handle fetching candidate information and total votes for a given ballot ID
-server.get('/voters',voters)
-server.get('/candidate',Candidate)
+server.get("/voters", voters);
+server.get("/candidate", Candidate);
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Database connected"))
