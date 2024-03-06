@@ -91,7 +91,7 @@ server.get("/result/:ballotId", async (req, res) => {
     ]);
 
     // Fetch candidate details for each candidate
-    const candidates = await Candidate.find({ BallotId: ballotId });
+    const candidates = await candidate.find({ BallotId: ballotId });
 
     // Map each candidate to include total votes
     const candidateResults = candidates.map((candidate) => {
@@ -116,7 +116,7 @@ server.get("/result/:ballotId", async (req, res) => {
 server.delete("/candidate/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await Candidate.deleteOne({ _id: id });
+    const result = await candidate.delete({ _id: id });
     if (result.deletedCount === 1) {
       res.json({ message: "Candidate deleted successfully" });
     } else {
