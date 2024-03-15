@@ -107,7 +107,7 @@ server.get("/result/:ballotId", async (req, res) => {
     });
 
     // Return the result
-    return res.status(200).json({ candidates: candidateResults });
+    return res.status(200).json({ candidate: candidateResults });
   } catch (error) {
     console.error("Error fetching result:", error);
     return res.status(500).json({ message: "Internal Server Error" });
