@@ -116,7 +116,7 @@ server.get("/result/:ballotId", async (req, res) => {
 server.delete("/candidate/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await candidate.delete({ _id: id });
+    const result = await candidate.deleteOne({ _id: id });
     if (result.deletedCount === 1) {
       res.json({ message: "Candidate deleted successfully" });
     } else {
@@ -126,6 +126,7 @@ server.delete("/candidate/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Define route to handle fetching candidate information and total votes for a given ballot ID
 server.get("/voters", voters);
