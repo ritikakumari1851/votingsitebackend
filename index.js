@@ -3,7 +3,6 @@ const server = express();
 const { Server } = require("socket.io");
 const http = require("http");
 const mongoose = require("mongoose");
-const cors = require("cors");
 const {
   register,
   login,
@@ -20,7 +19,6 @@ const { sendEmail } = require("./src/helper/Email");
 const Vote = require("./src/model/vote");
 const candidate = require("./src/model/candidate");
 server.use(express.json());
-server.use(cors());
 
 const app = http.createServer(server);
 const io = new Server(app);
